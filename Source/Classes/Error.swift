@@ -51,6 +51,7 @@ public enum ConnectionError : Swift.Error {
     case protocolViolation(Error)
     case unknown(Error)
     case none
+    case unauthorized
     
     var recoverable : Bool {
         switch self {
@@ -63,6 +64,7 @@ public enum ConnectionError : Swift.Error {
         case .closed: return false
         case .unknown: return true
         case .none: return false
+        case .unauthorized: return false
         }
     }
   

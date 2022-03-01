@@ -25,6 +25,11 @@ import Starscream
 
 public typealias ActionPayload = Dictionary<String, Any>
 
+public struct DisconnectCommand {
+    public var reconnect: Bool? = nil
+    public var reason: String? = nil
+}
+
 open class ActionCableClient {
   
     //MARK: Socket
@@ -49,6 +54,10 @@ open class ActionCableClient {
     ///
     /// Called when the client disconnected
     open var onDisconnected: ((ConnectionError?) -> Void)?
+    /// onDisconnectCommandReceived
+    ///
+    /// Called when the client received disconnection command
+    open var onDisconnectedByCommand: ((DisconnectCommand?) -> Void)?
     /// Will Reconnect
     ///
     /// Called when the client is about to reconnect
@@ -74,7 +83,7 @@ open class ActionCableClient {
     open var headers : [String: String]? {
         get { return socket.request.allHTTPHeaderFields }
         set {
-            for (field, value) in headers ?? [:] {
+            for (field, value) in newValue ?? [:] {
                 socket.request.setValue(value, forHTTPHeaderField: field)
             }
         }
@@ -124,6 +133,7 @@ open class ActionCableClient {
           ActionCableConcurrentQueue.async {
             self.socket.connect()
             self.reconnectionState = nil
+            self.manualDisconnectFlag = false
           }
         }
   
@@ -476,6 +486,12 @@ extension ActionCableClient {
                     if let callback = onChannelUnsubscribed {
                         DispatchQueue.main.async(execute: { callback(channel) })
                     }
+                }
+                
+            case .disconnect:
+                disconnect()
+                if let callback = onDisconnectedByCommand {
+                    DispatchQueue.main.async(execute: { callback(message.disconnectCommand) })
                 }
             }
     }

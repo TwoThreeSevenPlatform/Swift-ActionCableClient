@@ -152,11 +152,23 @@ internal class JSONSerializer {
                   messageError = error
                 }
                 
-                return Message(channelName: channelName!,
+                return Message(channelName: channelName,
                                actionName: messageActionName,
                                messageType: MessageType.message,
                                data: messageValue,
                                error: messageError)
+                
+            case .disconnect:
+                return Message(channelName: nil,
+                               actionName: nil,
+                               messageType: MessageType.disconnect,
+                               data: nil,
+                               error: nil,
+                               disconnectCommand: DisconnectCommand(
+                                reconnect: JSONObj["reconnect"] as? Bool,
+                                reason: JSONObj["reason"] as? String
+                               ))
+                               
             
           }
         } catch {
