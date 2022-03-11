@@ -22,7 +22,6 @@
 
 import Foundation
 
-public typealias ChannelIdentifier = ActionPayload
 public typealias OnReceiveClosure = ((Any?, Swift.Error?) -> (Void))
 
 /// A particular channel on the server.
@@ -32,7 +31,7 @@ open class Channel: Hashable, Equatable {
     open var name : String
     
     /// Identifier
-    open var identifier: Dictionary<String, Any>?
+    open var identifier: ChannelIdentifier?
     
     /// Auto-Subscribe to channel on initialization and re-connect?
     open var autoSubscribe : Bool
@@ -49,15 +48,8 @@ open class Channel: Hashable, Equatable {
     /// Unique Identifier
     open var uid: String {
         get {
-            //defaults to channel name
-            var channelUID = name
             
-            //if identifier isn't empty, fetch the first value as the channel unique identifier
-            if let dictionary = identifier?.first {
-                channelUID = dictionary.value as! String
-            }
-            
-            return channelUID
+            return identifier?.uniqueJsonString ?? name
         }
     }
     
