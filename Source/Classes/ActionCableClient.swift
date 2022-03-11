@@ -234,13 +234,17 @@ extension ActionCableClient {
     ///     - autoSubscribe: Whether to automatically subscribe to the channel. Defaults to true.
     /// - Returns: a Channel
     
-    public func create(_ name: String, identifier: ChannelIdentifier?, autoSubscribe: Bool=true, bufferActions: Bool=true) -> Channel {
+    public func create(_ name: String, identifier: Dictionary<String, Any>?, autoSubscribe: Bool=true, bufferActions: Bool=true) -> Channel {
 		
         var channelUID = name
         
+        
         //if identifier isn't empty, fetch the first value as the channel unique identifier
-        if let identifier = identifier {
-            channelUID = identifier.uniqueJsonString
+        var channelIdentifier: ChannelIdentifier?
+        if let dict = identifier {
+            channelIdentifier = ChannelIdentifier(dict: dict)
+            channelIdentifier!.setChannelName(name: name)
+            channelUID = channelIdentifier!.uniqueJsonString
         }
 		
         // Look in existing channels and return that
@@ -251,7 +255,7 @@ extension ActionCableClient {
         
         // Otherwise create a new one
         let channel = Channel(name: name,
-            identifier: identifier,
+            identifier: channelIdentifier,
             client: self,
             autoSubscribe: autoSubscribe,
             shouldBufferActions: bufferActions)
