@@ -15,11 +15,7 @@ open class ChannelIdentifier {
     
     private var dict: Dictionary<String, Any> {
         didSet {
-            var uniqueJsonString = ""
-            if let JSONData = try? JSONSerialization.data(withJSONObject: dict, options: .sortedKeys) {
-                uniqueJsonString = String(data: JSONData, encoding: .utf8) ?? ""
-            }
-            self.uniqueJsonString = uniqueJsonString
+            updateUniqueJsonString()
         }
     }
     
@@ -28,6 +24,7 @@ open class ChannelIdentifier {
     public init (dict: Dictionary<String, Any>) {
         uniqueJsonString = ""
         self.dict = dict
+        updateUniqueJsonString()
     }
     
     public convenience init() {
@@ -46,4 +43,11 @@ open class ChannelIdentifier {
         return dict[Constants.channelKey] as? String
     }
     
+    private func updateUniqueJsonString() {
+        var uniqueJsonString = ""
+        if let JSONData = try? JSONSerialization.data(withJSONObject: dict, options: .sortedKeys) {
+            uniqueJsonString = String(data: JSONData, encoding: .utf8) ?? ""
+        }
+        self.uniqueJsonString = uniqueJsonString
+    }
 }
