@@ -23,8 +23,8 @@
 import Foundation
 import Accelerate
 
-internal let ActionCableSerialQueue = DispatchQueue(label: "com.ActionCableClient.SerialQueue", attributes: []);
-internal let ActionCableConcurrentQueue = DispatchQueue(label: "com.ActionCableClient.Conccurent", attributes: DispatchQueue.Attributes.concurrent)
+internal let ActionCableActionBufferSerialQueue = DispatchQueue(label: "com.ActionCableClient.ActionBufferSerialQueue", attributes: []);
+internal let ActionCableSerialQueue = DispatchQueue(label: "com.ActionCableClient.SerialQueue")
 
 internal enum Command {
     case subscribe

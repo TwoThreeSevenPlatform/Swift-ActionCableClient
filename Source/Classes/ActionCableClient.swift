@@ -130,7 +130,7 @@ open class ActionCableClient {
             callback()
           }
           
-          ActionCableConcurrentQueue.async {
+          ActionCableSerialQueue.async {
             self.socket.connect()
             self.reconnectionState = nil
             self.manualDisconnectFlag = false
@@ -163,7 +163,7 @@ open class ActionCableClient {
               callback()
             }
             
-            ActionCableConcurrentQueue.async {
+            ActionCableSerialQueue.async {
                 self.socket.connect()
             }
         }
@@ -422,7 +422,7 @@ extension ActionCableClient {
     }
     
     fileprivate func onText(_ text: String) {
-        ActionCableConcurrentQueue.async(execute: { () -> Void in
+        ActionCableSerialQueue.async(execute: { () -> Void in
             do {
                 let message = try JSONSerializer.deserialize(text)
                 self.onMessage(message)

@@ -148,7 +148,7 @@ open class Channel: Hashable, Equatable {
         // error and we are buffering the actions.
         } catch TransmitError.notSubscribed where self.shouldBufferActions {
             
-            ActionCableSerialQueue.async(execute: {
+            ActionCableActionBufferSerialQueue.async(execute: {
                 self.actionBuffer.append(Action(name: name, params: params))
             })
             
@@ -224,7 +224,7 @@ extension Channel {
     }
     
     internal func flushBuffer() {
-        ActionCableSerialQueue.sync(execute: {() -> Void in
+        ActionCableActionBufferSerialQueue.sync(execute: {() -> Void in
             // Bail out if the parent is gone for whatever reason
             while let action = self.actionBuffer.popLast() {
                 self.action(action.name, with: action.params)
